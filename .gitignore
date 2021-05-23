@@ -110,4 +110,3 @@ __pycache__/
 venv/
 package-lock.json
 .flaskenv
-database.db
