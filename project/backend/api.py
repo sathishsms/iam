@@ -204,14 +204,21 @@ def register():
     req = flask.request.get_json(force=True)
     username = req.get('username', None)
     password = req.get('password', None)
-    db.session.add(User(
-        username=username,
-        password=guard.hash_password(password),
-        roles="user"
-    ))
-    db.session.commit()
-    return "sucess", 200
-
+    try:
+        db.session.add(User(
+            username=username,
+            password=guard.hash_password(password),
+            roles="user"
+        ))
+        db.session.commit()
+        return flask.make_response(flask.jsonify(
+                category="success",
+            ), 200)
+    except Exception as ex:
+        print(f'error exception: {ex}')
+        return flask.make_response(flask.jsonify(
+            category="error",
+        ), 400)
 
 # Run the example
 if __name__ == '__main__':

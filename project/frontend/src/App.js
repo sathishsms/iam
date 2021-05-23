@@ -100,10 +100,22 @@ function SignUp() {
     fetch('/api/register', {
       method: 'post',
       body: JSON.stringify(opts)
-    }).then(r => r.json())
-      .then(
-        console.log("Signed up")
-      )
+    }).then(response => {
+      switch (response.status) {
+        case 200:
+          console.log('success')
+          toast('Sign up success')
+          break
+        case 400:
+          console.log('got 400 status')
+          toast('Signup failure')
+          break
+        case 500:
+            toast('Signup failure, verify the user already exists')
+            break
+      }
+    }
+    )
   }
 
   const onSubmitOTP = (e) => {
@@ -127,6 +139,9 @@ function SignUp() {
           console.log('got 400 status')
           toast('Ensure Phone number to trigger OTP')
           setOtpEnable(false)
+          break
+        case 500:
+          toast('error')
           break
       }
     }
