@@ -118,6 +118,7 @@ def refresh():
 
 @app.route('/api/protected')
 @flask_praetorian.auth_required
+@flask_praetorian.roles_accepted("admin")
 def protected():
     """
     A protected endpoint. The auth_required decorator will require a header
@@ -128,9 +129,24 @@ def protected():
     """
     message = ""
     if flask_praetorian.current_user().roles == "admin":
-        message = f"welcome  {flask_praetorian.current_user().username} admin, this is protected endpoint"
+        message = f"welcome  {flask_praetorian.current_user().username}, this is protected endpoint"
     else:
         message = f'Endpoint not allowed for user {flask_praetorian.current_user().username}'
+    return {"message":  message}
+
+
+@app.route('/api/protected_user')
+@flask_praetorian.auth_required
+@flask_praetorian.roles_accepted("user")
+def protected_user():
+    """
+    A protected endpoint. The auth_required decorator will require a header
+    containing a valid JWT
+    .. example::
+       $ curl http://localhost:5000/api/protected -X GET \
+         -H "Authorization: Bearer <your_token>"
+    """
+    message = f"welcome  {flask_praetorian.current_user().username} admin, this is protected endpoint"
     return {"message":  message}
 
 
@@ -212,13 +228,14 @@ def register():
         ))
         db.session.commit()
         return flask.make_response(flask.jsonify(
-                category="success",
-            ), 200)
+            category="success",
+        ), 200)
     except Exception as ex:
         print(f'error exception: {ex}')
         return flask.make_response(flask.jsonify(
             category="error",
         ), 400)
+
 
 # Run the example
 if __name__ == '__main__':

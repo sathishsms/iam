@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   BrowserRouter as Router,
@@ -43,6 +43,9 @@ export default function App() {
                 <li className="nav-item">
                   <Link className="nav-link" to={"/secret"}>{logged ? "API-1" : ""}</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={"/secret_user"}>{logged ? "API-2" : ""}</Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -55,6 +58,7 @@ export default function App() {
               <Route path="/sign-in" component={Login} />
               <Route path="/sign-up" component={SignUp} />
               <PrivateRoute path="/secret" component={Secret} />
+              <PrivateRoute path="/secret_user" component={Secret_user} />
             </Switch>
           </div>
         </div>
@@ -111,8 +115,8 @@ function SignUp() {
           toast('Signup failure')
           break
         case 500:
-            toast('Signup failure, verify the user already exists')
-            break
+          toast('Signup failure, verify the user already exists')
+          break
       }
     }
     )
@@ -161,12 +165,12 @@ function SignUp() {
     }).then(response => {
       switch (response.status) {
         case 200:
-            console.log("phone number verified: ", response)
-            toast('phone number verified')
-            setOtpcode("")
-            setPhone("")
-            setOtpEnable(false)
-            setOtpCheck(true)
+          console.log("phone number verified: ", response)
+          toast('phone number verified')
+          setOtpcode("")
+          setPhone("")
+          setOtpEnable(false)
+          setOtpCheck(true)
           break
         case 400:
           console.log('got 400 status')
@@ -234,11 +238,11 @@ function Login() {
         if (token.access_token) {
           login(token)
           console.log(token)
-          toast('Login Success') 
+          toast('Login Success')
         }
         else {
           console.log("Please type in correct username/password")
-          toast('Please type in correct username/password') 
+          toast('Please type in correct username/password')
         }
       })
   }
@@ -307,6 +311,28 @@ function Secret() {
     })
   }, [])
   return (
-    <h2>Secret: {message}</h2>
+    <h2>Message: {message}</h2>
+  )
+}
+
+function Secret_user() {
+  const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    authFetch("/api/protected_user").then(response => {
+      if (response.status === 401) {
+        setMessage("Sorry you aren't authorized!")
+        return null
+      }
+      return response.json()
+    }).then(response => {
+      if (response && response.message) {
+        setMessage(response.message)
+        console.log("secret message: " + message)
+      }
+    })
+  }, [])
+  return (
+    <h2>Message: {message}</h2>
   )
 }

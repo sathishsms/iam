@@ -29,11 +29,11 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 Two terminals - one for frontend and one for backend
 
 ##### frontend
-> cd ./src/frontend
+> cd ./project/frontend
 > npm install
 > npm run start
 ##### backend
-> cd ./src/backend
+> cd ./project/backend
 > ./venv/bin/activate
 > pip install -r requirements.txt
 > flask run
